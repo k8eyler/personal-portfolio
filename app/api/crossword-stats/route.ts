@@ -1,14 +1,19 @@
-import { NextResponse } from 'next/server';
-import { getCrosswordStats } from '@/lib/db';
+import { NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET() {
   try {
-    const data = await getCrosswordStats();
+    // Your existing data fetching logic here
+    const response = await fetch('your-data-source', {
+      cache: 'no-store'
+    });
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('API Error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch crossword statistics' },
+      { error: 'Failed to fetch data' },
       { status: 500 }
     );
   }

@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import CrosswordStatsAlt from '@/components/charts/CrosswordStatsAlt';
 
+export const dynamic = 'force-dynamic';
+
 // Define types for your data and state
 type CrosswordData = {
   year: number;
