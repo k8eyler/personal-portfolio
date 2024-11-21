@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ComposedChart,
   Bar,
@@ -24,7 +24,15 @@ interface CrosswordStatsProps {
 }
 
 const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
-  console.log('CrosswordStatsAlt rendering with data:', data);
+  useEffect(() => {
+    console.log('CrosswordStatsAlt mounted');
+    console.log('Data structure:', {
+      isArray: Array.isArray(data),
+      length: data?.length,
+      firstItem: data?.[0],
+      keys: data?.[0] ? Object.keys(data[0]) : 'no data'
+    });
+  }, [data]);
 
   if (!Array.isArray(data)) {
     console.error('Data is not an array:', data);
@@ -33,7 +41,17 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
 
   return (
     <div className="space-y-4">
-      <div className="h-96 w-full border border-gray-200">
+      <div 
+        className="h-96 w-full border border-gray-200 relative"
+        ref={(el) => {
+          if (el) {
+            console.log('Chart container dimensions:', {
+              width: el.clientWidth,
+              height: el.clientHeight
+            });
+          }
+        }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={data}
@@ -87,7 +105,5 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
         </ResponsiveContainer>
       </div>
     </div>
-  );
-};
-
-export default CrosswordStatsAlt;
+  )
+  export default CrosswordStatsAlt;
