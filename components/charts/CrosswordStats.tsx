@@ -1,7 +1,6 @@
-// components/charts/CrosswordStats.tsx
-"use client";  // Add this line at the very top
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   ComposedChart,
   Bar,
@@ -14,37 +13,12 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-const CrosswordStats = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+interface CrosswordStatsProps {
+  data: any[];
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/crossword-stats');
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const jsonData = await response.json();
-        setData(jsonData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-96">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
-  }
+const CrosswordStats: React.FC<CrosswordStatsProps> = ({ data }) => {
+  if (!data) return <div>Loading...</div>;
 
   return (
     <div className="w-full h-96 p-4">
@@ -85,21 +59,21 @@ const CrosswordStats = () => {
             dataKey="completed"
             name="Completed Puzzles"
             stackId="a"
-            fill="#1E40AF"  // Dark blue
+            fill="#1E40AF"
           />
           <Bar
             yAxisId="left"
             dataKey="started"
             name="Started But Not Finished"
             stackId="a"
-            fill="#06B6D4"  // Lighter blue
+            fill="#06B6D4"
           />
           <Line
             yAxisId="right"
             type="monotone"
             dataKey="hours_spent"
             name="Hours Spent"
-            stroke="#EC4899"  // Pink
+            stroke="#EC4899"
             strokeWidth={2}
             dot={{ r: 4 }}
           />

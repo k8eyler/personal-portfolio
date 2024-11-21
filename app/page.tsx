@@ -1,11 +1,40 @@
-// app/page.tsx
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CrosswordStats from '@/components/charts/CrosswordStats';
 import CrosswordStatsAlt from '@/components/charts/CrosswordStatsAlt';
 
 export default function Home() {
   const [activeView, setActiveView] = useState('default');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/crossword-stats');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const jsonData = await response.json();
+        setData(jsonData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 p-4">Error: {error}</div>;
+  }
 
   return (
     <main className="min-h-screen p-8">
@@ -37,7 +66,13 @@ export default function Home() {
           </div>
         </div>
         
-        {activeView === 'default' ? <CrosswordStats /> : <CrosswordStatsAlt />}
+        {data && (
+          activeView === 'default' ? (
+            <CrosswordStats data={data} />
+          ) : (
+            <CrosswordStatsAlt data={data} />
+          )
+        )}
       </div>
     </main>
   );
