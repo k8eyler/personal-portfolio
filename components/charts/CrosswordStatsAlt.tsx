@@ -39,6 +39,12 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
     return <div>Error: Invalid data format</div>;
   }
 
+  console.log('Rendering chart with dimensions:', {
+    containerClass: 'h-96 w-full',
+    dataPoints: data?.length,
+    dataExample: data?.[0]
+  });
+
   return (
     <div className="space-y-4">
       <div 
@@ -105,5 +111,7 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
         </ResponsiveContainer>
       </div>
     </div>
-  )
-  export default CrosswordStatsAlt;
+  );
+};
+
+export default CrosswordStatsAlt;
