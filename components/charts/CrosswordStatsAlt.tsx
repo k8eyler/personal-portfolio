@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ComposedChart,
   Bar,
@@ -12,10 +12,20 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-const CrosswordStatsAlt = ({ data }) => {
+type CrosswordData = {
+  year: number;
+  completed: number;
+  started: number;
+  hours_spent: number;
+}
+
+interface CrosswordStatsProps {
+  data: CrosswordData[];
+}
+
+const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
   console.log('CrosswordStatsAlt rendering with data:', data);
 
-  // Add basic validation
   if (!Array.isArray(data)) {
     console.error('Data is not an array:', data);
     return <div>Error: Invalid data format</div>;
@@ -35,10 +45,7 @@ const CrosswordStatsAlt = ({ data }) => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="year" 
-              height={60}
-            />
+            <XAxis dataKey="year" height={60} />
             <YAxis 
               yAxisId="puzzles"
               label={{ 

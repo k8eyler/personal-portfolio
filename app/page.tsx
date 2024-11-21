@@ -2,12 +2,20 @@
 import { useState, useEffect } from 'react';
 import CrosswordStatsAlt from '@/components/charts/CrosswordStatsAlt';
 
+// Define types for your data and state
+type CrosswordData = {
+  year: number;
+  completed: number;
+  started: number;
+  hours_spent: number;
+}
+
 export default function Home() {
   console.log('Home component starting to render');
 
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<CrosswordData[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);  // Changed from null to string | null
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,10 +26,10 @@ export default function Home() {
           throw new Error('Failed to fetch data');
         }
         const jsonData = await response.json();
-        console.log('Received data:', jsonData); // Debug log
+        console.log('Received data:', jsonData);
         setData(jsonData);
       } catch (err) {
-        console.error('Error fetching data:', err); // Debug log
+        console.error('Error fetching data:', err);
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
         setLoading(false);
@@ -32,16 +40,16 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    console.log('Loading state...'); // Debug log
+    console.log('Loading state...');
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   if (error) {
-    console.log('Error state:', error); // Debug log
+    console.log('Error state:', error);
     return <div className="text-red-500 p-4">Error: {error}</div>;
   }
 
-  console.log('Rendering with data:', data); // Debug log
+  console.log('Rendering with data:', data);
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
