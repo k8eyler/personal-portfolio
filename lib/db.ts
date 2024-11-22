@@ -1,10 +1,20 @@
-import { Pool } from '@vercel/postgres';
+import { Pool } from 'pg';
 
+// Initialize connection pool
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DATABASE,
+  password: process.env.POSTGRES_PASSWORD,
+  port: parseInt(process.env.POSTGRES_PORT || '5432'),
   ssl: {
     rejectUnauthorized: false
   }
+});
+
+// Add error handler
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
 });
 
 export async function getCrosswordStats() {
