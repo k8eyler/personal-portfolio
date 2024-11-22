@@ -1,22 +1,26 @@
+import { Pool } from 'pg';
 
-function getPool() {
-  if (!pool) {
-    console.log('Creating new connection pool...');
-    pool = new Pool(config);
-    pool.on('error', (err) => {
-      console.error('Unexpected error on idle client', err);
-      pool = null;
-    });
-  }
-  return pool;
-}
+// Initialize pool immediately
+const pool = new Pool({
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DATABASE,
+  password: process.env.POSTGRES_PASSWORD,
+  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  ssl: {
+    rejectUnauthorized: false
+  },
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 5000
+});
+
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+});
 
 export async function getCrosswordStats() {
-  const startTime = Date.now();
-  let client;
-  
+  const client = await pool.connect();
   try {
-    client = await getPool().connect();
     const { rows } = await client.query(`
       SELECT 
         EXTRACT(YEAR FROM print_date)::integer as year,
@@ -29,18 +33,14 @@ export async function getCrosswordStats() {
       ORDER BY year;
     `);
     return rows;
-  } catch (error) {
-    console.error('Database error:', error);
-    throw error;
   } finally {
-    if (client) client.release();
+    client.release();
   }
 }
 
 export async function getDailyCrosswordStats(year: string) {
-  let client;
+  const client = await pool.connect();
   try {
-    client = await getPool().connect();
     const { rows } = await client.query(`
       SELECT 
         print_date,
@@ -52,10 +52,7 @@ export async function getDailyCrosswordStats(year: string) {
       ORDER BY print_date;
     `, [year]);
     return rows;
-  } catch (error) {
-    console.error('Database error:', error);
-    throw error;
   } finally {
-    if (client) client.release();
+    client.release();
   }
 }
