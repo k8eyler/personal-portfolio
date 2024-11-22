@@ -1,18 +1,28 @@
 import { Pool } from 'pg';
 
-const connectionString = `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DATABASE}`;
-
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DATABASE,
+  password: process.env.POSTGRES_PASSWORD,
+  port: parseInt(process.env.POSTGRES_PORT || '5432'),
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+    sslmode: 'require'
+  },
+  // Add shorter timeouts for production
+  connectionTimeoutMillis: 8000,
+  idleTimeoutMillis: 8000,
+  query_timeout: 8000
 });
 
 export async function getCrosswordStats() {
-  const client = await pool.connect();
+  let client;
   try {
-    console.log('Connected to database, executing query...');
+    console.log('Attempting database connection...');
+    client = await pool.connect();
+    console.log('Connected to database');
+
     const { rows } = await client.query(`
       SELECT 
         EXTRACT(YEAR FROM print_date)::integer as year,
@@ -24,12 +34,11 @@ export async function getCrosswordStats() {
       GROUP BY EXTRACT(YEAR FROM print_date)
       ORDER BY year;
     `);
-    console.log('Query executed successfully');
     return rows;
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('Database connection error:', error);
     throw error;
   } finally {
-    client.release();
+    if (client) client.release();
   }
 }
