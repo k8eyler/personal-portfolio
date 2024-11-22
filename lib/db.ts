@@ -1,35 +1,15 @@
-import { Pool } from 'pg';
+import { Pool } from '@vercel/postgres';
 
 const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DATABASE,
-  password: process.env.POSTGRES_PASSWORD,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  connectionString: process.env.POSTGRES_URL,
   ssl: {
     rejectUnauthorized: false
-  },
-  // Extended timeouts
-  connectionTimeoutMillis: 20000,
-  idleTimeoutMillis: 20000,
-  // Add statement timeout
-  statement_timeout: 20000,
-  query_timeout: 20000
-});
-
-// Log connection attempts
-pool.on('connect', () => {
-  console.log('Database connection established');
-});
-
-pool.on('error', (err) => {
-  console.error('Unexpected database error:', err);
+  }
 });
 
 export async function getCrosswordStats() {
   const client = await pool.connect();
   try {
-    console.log('Executing query...');
     const { rows } = await client.query(`
       SELECT 
         EXTRACT(YEAR FROM print_date)::integer as year,
@@ -41,11 +21,7 @@ export async function getCrosswordStats() {
       GROUP BY EXTRACT(YEAR FROM print_date)
       ORDER BY year;
     `);
-    console.log('Query completed successfully');
     return rows;
-  } catch (error) {
-    console.error('Query error:', error);
-    throw error;
   } finally {
     client.release();
   }
