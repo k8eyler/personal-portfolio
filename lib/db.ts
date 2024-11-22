@@ -1,6 +1,5 @@
 import { Pool } from 'pg';
 
-// Initialize pool immediately
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
@@ -10,17 +9,27 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   },
-  connectionTimeoutMillis: 5000,
-  idleTimeoutMillis: 5000
+  // Extended timeouts
+  connectionTimeoutMillis: 20000,
+  idleTimeoutMillis: 20000,
+  // Add statement timeout
+  statement_timeout: 20000,
+  query_timeout: 20000
+});
+
+// Log connection attempts
+pool.on('connect', () => {
+  console.log('Database connection established');
 });
 
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+  console.error('Unexpected database error:', err);
 });
 
 export async function getCrosswordStats() {
   const client = await pool.connect();
   try {
+    console.log('Executing query...');
     const { rows } = await client.query(`
       SELECT 
         EXTRACT(YEAR FROM print_date)::integer as year,
@@ -32,7 +41,11 @@ export async function getCrosswordStats() {
       GROUP BY EXTRACT(YEAR FROM print_date)
       ORDER BY year;
     `);
+    console.log('Query completed successfully');
     return rows;
+  } catch (error) {
+    console.error('Query error:', error);
+    throw error;
   } finally {
     client.release();
   }
