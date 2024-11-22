@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/crossword-stats": {
+    "app/api/crossword-stats/route.ts": {
       "maxDuration": 60
     }
   }
