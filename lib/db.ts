@@ -1,25 +1,18 @@
 import { Pool } from 'pg';
 
-// Initialize connection pool
+const connectionString = `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DATABASE}`;
+
 const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DATABASE,
-  password: process.env.POSTGRES_PASSWORD,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  connectionString,
   ssl: {
     rejectUnauthorized: false
   }
 });
 
-// Add error handler
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-});
-
 export async function getCrosswordStats() {
   const client = await pool.connect();
   try {
+    console.log('Connected to database, executing query...');
     const { rows } = await client.query(`
       SELECT 
         EXTRACT(YEAR FROM print_date)::integer as year,
@@ -31,26 +24,11 @@ export async function getCrosswordStats() {
       GROUP BY EXTRACT(YEAR FROM print_date)
       ORDER BY year;
     `);
+    console.log('Query executed successfully');
     return rows;
-  } finally {
-    client.release();
-  }
-}
-
-export async function getDailyCrosswordStats(year: string) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`
-      SELECT 
-        print_date,
-        solved as completed,
-        CASE WHEN percent_filled > 0 AND solved = false THEN true ELSE false END as started,
-        solving_seconds / 3600.0 as hours_spent
-      FROM public.crossword_stats
-      WHERE EXTRACT(YEAR FROM print_date)::text = $1
-      ORDER BY print_date;
-    `, [year]);
-    return rows;
+  } catch (error) {
+    console.error('Database error:', error);
+    throw error;
   } finally {
     client.release();
   }
