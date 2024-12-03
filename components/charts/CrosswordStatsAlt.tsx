@@ -7,16 +7,19 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 
+// Define the type for crossword data
 type CrosswordData = {
   year: number;
-  completed: number;
-  started: number;
-  hours_spent: number;
-}
+  started: number; // solved = false & percent_filled > 0
+  completed: number; // solved = true & star != 'Gold'
+  goldStar: number; // solved = true & star = 'Gold'
+  hours_spent: number; // Total hours spent
+};
 
+// Props for the component
 interface CrosswordStatsProps {
   data: CrosswordData[];
 }
@@ -29,32 +32,45 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
       return;
     }
 
-    // Log each data point for debugging
+    // Log data points for debugging
     data.forEach((item, index) => {
       console.log(`Data point ${index}:`, {
         year: typeof item.year === 'number' ? item.year : 'invalid',
-        completed: typeof item.completed === 'number' ? item.completed : 'invalid',
         started: typeof item.started === 'number' ? item.started : 'invalid',
-        hours_spent: typeof item.hours_spent === 'number' ? item.hours_spent : 'invalid'
+        completed: typeof item.completed === 'number' ? item.completed : 'invalid',
+        goldStar: typeof item.goldStar === 'number' ? item.goldStar : 'invalid',
+        hours_spent: typeof item.hours_spent === 'number' ? item.hours_spent : 'invalid',
       });
     });
   }, [data]);
 
-  // Early return if data is invalid
-  if (!Array.isArray(data)) {
-    return <div className="p-4 text-red-500">Error: Invalid data format</div>;
-  }
-
   // Validate and transform data
-  const validData = data.filter(item => (
-    typeof item.year === 'number' &&
-    typeof item.completed === 'number' &&
-    typeof item.started === 'number' &&
-    typeof item.hours_spent === 'number'
-  ));
+  const validData = Array.isArray(data)
+    ? data
+        .map((item) => ({
+          year: Number(item.year),
+          started: Number(item.started),
+          completed: Number(item.completed),
+          goldStar: Number(item.goldStar),
+          hours_spent: Number(item.hours_spent),
+        }))
+        .filter(
+          (item) =>
+            !isNaN(item.year) &&
+            !isNaN(item.started) &&
+            !isNaN(item.completed) &&
+            !isNaN(item.goldStar) &&
+            !isNaN(item.hours_spent)
+        )
+    : [];
 
+  // Handle invalid data scenarios
   if (validData.length === 0) {
-    return <div className="p-4 text-red-500">Error: No valid data points found</div>;
+    return (
+      <div className="p-4 text-red-500">
+        Error: No valid data points found. Please check the input data format.
+      </div>
+    );
   }
 
   return (
@@ -71,40 +87,52 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
-            <XAxis 
+            <XAxis
               dataKey="year"
               height={60}
               tick={{ fill: '#4B5563' }}
+              label={{
+                value: 'Year',
+                position: 'insideBottom',
+                style: { fill: '#4B5563' },
+              }}
             />
-            <YAxis 
+            <YAxis
               yAxisId="puzzles"
-              label={{ 
-                value: 'Number of Puzzles', 
-                angle: -90, 
+              label={{
+                value: 'Number of Puzzles',
+                angle: -90,
                 position: 'insideLeft',
-                style: { fill: '#4B5563' }
+                style: { fill: '#4B5563' },
               }}
               tick={{ fill: '#4B5563' }}
             />
-            <YAxis 
-              yAxisId="time" 
+            <YAxis
+              yAxisId="time"
               orientation="right"
-              label={{ 
-                value: 'Hours Spent', 
-                angle: 90, 
+              label={{
+                value: 'Hours Spent',
+                angle: 90,
                 position: 'insideRight',
-                style: { fill: '#4B5563' }
+                style: { fill: '#4B5563' },
               }}
               tick={{ fill: '#4B5563' }}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 border: '1px solid #E5E7EB',
-                borderRadius: '6px'
+                borderRadius: '6px',
               }}
             />
             <Legend />
+            <Bar
+              yAxisId="puzzles"
+              dataKey="started"
+              name="Started Puzzles"
+              fill="#93C5FD"
+              radius={[4, 4, 0, 0]}
+            />
             <Bar
               yAxisId="puzzles"
               dataKey="completed"
@@ -114,9 +142,9 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
             />
             <Bar
               yAxisId="puzzles"
-              dataKey="started"
-              name="Started Puzzles"
-              fill="#93C5FD"
+              dataKey="goldStar"
+              name="Gold Star Puzzles"
+              fill="#FCD34D"
               radius={[4, 4, 0, 0]}
             />
             <Bar

@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import CrosswordStatsAlt from '@/components/charts/CrosswordStatsAlt';
+import { useState, useEffect } from "react";
+import CrosswordStatsAlt from "@/components/charts/CrosswordStatsAlt";
 
+// Updated type definition to include goldStar
 interface CrosswordData {
   year: number;
   completed: number;
   started: number;
   hours_spent: number;
+  goldStar: number; // Added to match CrosswordStatsAlt's expected data shape
 }
 
 export default function Home() {
@@ -18,59 +20,57 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('Initiating data fetch...');
+        console.log("Initiating data fetch...");
         setLoading(true);
         setError(null);
 
-        const response = await fetch('/api/crossword-stats');
-        
+        const response = await fetch("/api/crossword-stats");
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const jsonData = await response.json();
-        console.log('Raw API response:', jsonData);
+        console.log("Raw API response:", jsonData);
 
-        // Validate that we received an array
-        if (!Array.isArray(jsonData)) {
-          throw new Error('Invalid data format: expected an array');
-        }
+        // Validate and transform the API response
+        const transformedData = jsonData
+          .map((item: any, index: number) => {
+            // Ensure all required fields are present and valid
+            const transformedItem = {
+              year: Number(item.year),
+              completed: Number(item.completed),
+              started: Number(item.started),
+              hours_spent: Number(item.hours_spent),
+              goldStar: Number(item.goldStar), // Transform and validate goldStar
+            };
 
-        // Transform and validate each data point
-        const transformedData = jsonData.map((item, index) => {
-          // Ensure each field is a number
-          const transformedItem = {
-            year: Number(item.year),
-            completed: Number(item.completed),
-            started: Number(item.started),
-            hours_spent: Number(item.hours_spent)
-          };
+            if (
+              isNaN(transformedItem.year) ||
+              isNaN(transformedItem.completed) ||
+              isNaN(transformedItem.started) ||
+              isNaN(transformedItem.hours_spent) ||
+              isNaN(transformedItem.goldStar)
+            ) {
+              console.error(`Invalid data at index ${index}:`, item);
+              return null;
+            }
 
-          // Validate the transformed item
-          if (
-            isNaN(transformedItem.year) ||
-            isNaN(transformedItem.completed) ||
-            isNaN(transformedItem.started) ||
-            isNaN(transformedItem.hours_spent)
-          ) {
-            console.error(`Invalid data at index ${index}:`, item);
-            return null;
-          }
+            return transformedItem;
+          })
+          .filter((item: CrosswordData | null): item is CrosswordData => item !== null);
 
-          return transformedItem;
-        }).filter((item): item is CrosswordData => item !== null);
-
-        // Check if we have any valid data points
         if (transformedData.length === 0) {
-          throw new Error('No valid data points found in the response');
+          throw new Error("No valid data points found in the response");
         }
 
-        console.log('Transformed data:', transformedData);
+        console.log("Transformed data:", transformedData);
         setData(transformedData);
-
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        console.error("Error fetching data:", err);
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -112,7 +112,9 @@ export default function Home() {
       <div className="p-4 max-w-6xl mx-auto">
         <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
           <h5 className="font-medium">No Data Available</h5>
-          <p className="text-sm">No crossword statistics are currently available.</p>
+          <p className="text-sm">
+            No crossword statistics are currently available.
+          </p>
         </div>
       </div>
     );
@@ -132,7 +134,7 @@ export default function Home() {
         <div className="mb-4 p-4 bg-gray-50 rounded-lg space-y-2 text-sm text-gray-600">
           <h2>Debug Information:</h2>
           <p>Data points: {data.length}</p>
-          <p>Years covered: {data.map(d => d.year).join(', ')}</p>
+          <p>Years covered: {data.map((d) => d.year).join(", ")}</p>
         </div>
 
         {/* Chart component */}

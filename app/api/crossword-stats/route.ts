@@ -7,15 +7,15 @@ export const maxDuration = 60; // Explicitly set max duration
 
 export async function GET() {
   const startTime = Date.now();
-  
+
   try {
     console.log('API Route - Starting request...');
     
     // Add timeout to the database query
-    const timeoutPromise = new Promise((_, reject) => {
+    const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => {
         reject(new Error('Database query timeout'));
-      }, 50000); // 50 second timeout
+      }, 50000); // 50-second timeout
     });
 
     // Race between the actual query and the timeout
@@ -38,16 +38,25 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     const duration = Date.now() - startTime;
+
+    // Type guard to safely handle the error object
+    let errorMessage = 'Unknown error';
+    let errorStack = '';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorStack = error.stack || '';
+    }
+
     console.error('API Route - Error:', {
-      message: error.message,
+      message: errorMessage,
       duration,
-      stack: error.stack
+      stack: errorStack
     });
 
     return NextResponse.json(
       {
         error: 'Failed to fetch statistics',
-        details: error.message,
+        details: errorMessage,
         duration
       },
       { status: 500 }
