@@ -10,29 +10,25 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-// Define the type for crossword data
 type CrosswordData = {
   year: number;
-  started: number; // solved = false & percent_filled > 0
-  completed: number; // solved = true & star != 'Gold'
-  goldStar: number; // solved = true & star = 'Gold'
-  hours_spent: number; // Total hours spent
+  started: number;
+  completed: number;
+  goldStar: number;
+  hours_spent: number;
 };
 
-// Props for the component
 interface CrosswordStatsProps {
   data: CrosswordData[];
 }
 
 const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
   useEffect(() => {
-    // Validate data on component mount
     if (!Array.isArray(data)) {
       console.error('Data is not an array:', data);
       return;
     }
 
-    // Log data points for debugging
     data.forEach((item, index) => {
       console.log(`Data point ${index}:`, {
         year: typeof item.year === 'number' ? item.year : 'invalid',
@@ -44,7 +40,6 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
     });
   }, [data]);
 
-  // Validate and transform data
   const validData = Array.isArray(data)
     ? data
         .map((item) => ({
@@ -64,7 +59,6 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
         )
     : [];
 
-  // Handle invalid data scenarios
   if (validData.length === 0) {
     return (
       <div className="p-4 text-red-500">
@@ -126,33 +120,33 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
               }}
             />
             <Legend />
+            {/* Stack order: Gold Star (bottom) -> Completed -> Started (top) */}
             <Bar
               yAxisId="puzzles"
-              dataKey="started"
-              name="Started Puzzles"
-              fill="#93C5FD"
-              radius={[4, 4, 0, 0]}
+              dataKey="goldStar"
+              name="Gold Star Puzzles"
+              fill="#FCD34D"
+              stackId="puzzles"
             />
             <Bar
               yAxisId="puzzles"
               dataKey="completed"
               name="Completed Puzzles"
               fill="#2563EB"
-              radius={[4, 4, 0, 0]}
+              stackId="puzzles"
             />
             <Bar
               yAxisId="puzzles"
-              dataKey="goldStar"
-              name="Gold Star Puzzles"
-              fill="#FCD34D"
-              radius={[4, 4, 0, 0]}
+              dataKey="started"
+              name="Started Puzzles"
+              fill="#93C5FD"
+              stackId="puzzles"
             />
             <Bar
               yAxisId="time"
               dataKey="hours_spent"
               name="Hours Spent"
               fill="#7C3AED"
-              radius={[4, 4, 0, 0]}
             />
           </ComposedChart>
         </ResponsiveContainer>
