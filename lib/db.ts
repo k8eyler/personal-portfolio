@@ -22,7 +22,8 @@ export async function getPuzzleTimesByDay(dayIndex: number) {
         puzzle_id,
         print_date,
         solving_seconds,
-        title
+        title,
+        star
       FROM public.crossword_stats
       WHERE day_of_week_integer = $1
         AND solved = true

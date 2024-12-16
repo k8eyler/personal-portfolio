@@ -16,6 +16,7 @@ interface PuzzleTime {
   print_date: string;
   solving_seconds: number;
   title?: string;
+  star?: string;
 }
 
 interface PuzzleTimeTrendProps {
@@ -39,20 +40,71 @@ const PuzzleTimeTrend: React.FC<PuzzleTimeTrendProps> = ({ data, dayName, onClos
     });
   };
 
-  // Sort data by date and calculate running average
+  // Calculate median of an array of numbers
+  const calculateMedian = (numbers: number[]): number => {
+    const sorted = numbers.slice().sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+
+    if (sorted.length % 2 === 0) {
+      return (sorted[middle - 1] + sorted[middle]) / 2;
+    }
+    return sorted[middle];
+  };
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const puzzleData = payload[0].payload;
+      return (
+        <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm">
+          <p className="font-medium text-gray-900">{`Date: ${label}`}</p>
+          <p className="text-gray-600">{`Time: ${formatTime(puzzleData.solving_seconds)}`}</p>
+          {puzzleData.star === 'Gold' && (
+            <p className="text-amber-500">★ Gold Star</p>
+          )}
+          <p className="text-emerald-600">{`Average: ${formatTime(puzzleData.averageSeconds)}`}</p>
+          <p className="text-purple-600">{`Median: ${formatTime(puzzleData.medianSeconds)}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Sort data by date and calculate running average and median
   const chartData = data
     .sort((a, b) => new Date(a.print_date).getTime() - new Date(b.print_date).getTime())
     .map((puzzle, index, array) => {
-      // Calculate running average up to this point
+      // Get all puzzles up to this point
       const previousPuzzles = array.slice(0, index + 1);
+      
+      // Calculate running average
       const averageSeconds = previousPuzzles.reduce((sum, p) => sum + p.solving_seconds, 0) / previousPuzzles.length;
+      
+      // Calculate running median
+      const medianSeconds = calculateMedian(previousPuzzles.map(p => p.solving_seconds));
 
       return {
         ...puzzle,
         formattedDate: formatDate(puzzle.print_date),
-        averageSeconds: Math.round(averageSeconds)
+        averageSeconds: Math.round(averageSeconds),
+        medianSeconds: Math.round(medianSeconds)
       };
     });
+
+  // Custom bar component to handle gold star coloring
+  const CustomBar = (props: any) => {
+    const { fill, x, y, width, height, payload } = props;
+    const isGoldStar = payload.star === 'Gold';
+    return (
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={isGoldStar ? '#FCD34D' : '#93c5fd'}
+      />
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -92,15 +144,12 @@ const PuzzleTimeTrend: React.FC<PuzzleTimeTrendProps> = ({ data, dayName, onClos
                   style: { textAnchor: 'middle' }
                 }}
               />
-              <Tooltip
-                formatter={(value: number) => [formatTime(value), 'Time']}
-                labelFormatter={(label) => `Date: ${label}`}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar
                 dataKey="solving_seconds"
                 name="Completion Time"
-                fill="#93c5fd"
+                shape={<CustomBar />}
                 maxBarSize={50}
               />
               <Line
@@ -108,6 +157,16 @@ const PuzzleTimeTrend: React.FC<PuzzleTimeTrendProps> = ({ data, dayName, onClos
                 dataKey="averageSeconds"
                 name="Running Average"
                 stroke="#10b981"
+                strokeWidth={2}
+                strokeDasharray="3 3"
+                dot={false}
+                activeDot={{ r: 6 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="medianSeconds"
+                name="Running Median"
+                stroke="#8b5cf6"
                 strokeWidth={2}
                 strokeDasharray="3 3"
                 dot={false}
