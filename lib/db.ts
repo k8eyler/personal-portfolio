@@ -10,9 +10,31 @@ const pool = new Pool({
   idleTimeoutMillis: 5000,
   max: 1,
   ssl: {
-    rejectUnauthorized: false, // Only keep supported properties
+    rejectUnauthorized: false,
   }
 });
+
+export async function getPuzzleTimesByDay(dayIndex: number) {
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(`
+      SELECT 
+        puzzle_id,
+        print_date,
+        solving_seconds,
+        title,
+        star
+      FROM public.crossword_stats
+      WHERE day_of_week_integer = $1
+        AND solved = true
+        AND puzzle_id NOT IN (12832, 11357)
+      ORDER BY print_date ASC
+    `, [dayIndex]);
+    return rows;
+  } finally {
+    client.release();
+  }
+}
 
 export async function getCrosswordStats() {
   const client = await pool.connect();
@@ -28,6 +50,41 @@ export async function getCrosswordStats() {
       WHERE print_date IS NOT NULL
       GROUP BY EXTRACT(YEAR FROM print_date)
       ORDER BY year;
+    `);
+    return rows;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getFastestTimes() {
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(`
+      WITH RankedPuzzles AS (
+        SELECT 
+          puzzle_id,
+          print_date,
+          day_of_week_integer,
+          solving_seconds,
+          day_of_week_name,
+          ROW_NUMBER() OVER (PARTITION BY day_of_week_integer ORDER BY solving_seconds ASC) as rn
+        FROM public.crossword_stats
+        WHERE solved = true
+        AND puzzle_id NOT IN (12832, 11357)
+      )
+      SELECT 
+        puzzle_id,
+        print_date,
+        day_of_week_integer,
+        solving_seconds,
+        day_of_week_name
+      FROM RankedPuzzles
+      WHERE rn = 1
+      ORDER BY CASE 
+        WHEN day_of_week_integer = 0 THEN 7 
+        ELSE day_of_week_integer 
+      END;
     `);
     return rows;
   } finally {

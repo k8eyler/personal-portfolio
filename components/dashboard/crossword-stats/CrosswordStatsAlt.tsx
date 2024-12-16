@@ -16,11 +16,34 @@ type CrosswordData = {
   completed: number;
   goldStar: number;
   hours_spent: number;
+  completionPercentage?: number;
 };
 
 interface CrosswordStatsProps {
   data: CrosswordData[];
 }
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm">
+        <p className="font-medium text-gray-900">{`Year: ${label}`}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={index} style={{ color: entry.color }}>
+            {entry.name}: {entry.value}
+            {entry.name === "Hours Spent" ? " hours" : ""}
+          </p>
+        ))}
+        {payload[0]?.payload?.completionPercentage && (
+          <p className="mt-2 text-gray-600 border-t border-gray-200 pt-2">
+            Yearly Completion: {payload[0].payload.completionPercentage.toFixed(1)}%
+          </p>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
 
 const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
   useEffect(() => {
@@ -42,13 +65,17 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
 
   const validData = Array.isArray(data)
     ? data
-        .map((item) => ({
-          year: Number(item.year),
-          started: Number(item.started),
-          completed: Number(item.completed),
-          goldStar: Number(item.goldStar),
-          hours_spent: Number(item.hours_spent),
-        }))
+        .map((item) => {
+          const totalCompleted = Number(item.completed) + Number(item.goldStar);
+          return {
+            year: Number(item.year),
+            started: Number(item.started),
+            completed: Number(item.completed),
+            goldStar: Number(item.goldStar),
+            hours_spent: Number(item.hours_spent),
+            completionPercentage: (totalCompleted / 365) * 100
+          };
+        })
         .filter(
           (item) =>
             !isNaN(item.year) &&
@@ -112,15 +139,8 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
               }}
               tick={{ fill: '#4B5563' }}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                border: '1px solid #E5E7EB',
-                borderRadius: '6px',
-              }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
-            {/* Stack order: Gold Star (bottom) -> Completed -> Started (top) */}
             <Bar
               yAxisId="puzzles"
               dataKey="goldStar"
