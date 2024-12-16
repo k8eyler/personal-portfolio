@@ -1,76 +1,66 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CrosswordStatsAlt from "@/components/charts/CrosswordStatsAlt";
+import CrosswordStatsAlt from "@/components/dashboard/crossword-stats/CrosswordStatsAlt";
+import FastestTimes from "@/components/dashboard/fastest-times/FastestTimes";
 
-// Updated type definition to include goldStar
 interface CrosswordData {
   year: number;
   completed: number;
   started: number;
   hours_spent: number;
-  goldStar: number; // Added to match CrosswordStatsAlt's expected data shape
+  goldStar: number;
 }
 
 export default function Home() {
-  const [data, setData] = useState<CrosswordData[] | null>(null);
+  const [statsData, setStatsData] = useState<CrosswordData[] | null>(null);
+  const [fastestData, setFastestData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Initiating data fetch...");
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/api/crossword-stats");
+        // Fetch both datasets in parallel
+        const [statsResponse, fastestResponse] = await Promise.all([
+          fetch("/api/crossword-stats"),
+          fetch("/api/fastest-times")
+        ]);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!statsResponse.ok || !fastestResponse.ok) {
+          throw new Error(`HTTP error! status: ${statsResponse.status} ${fastestResponse.status}`);
         }
 
-        const jsonData = await response.json();
-        console.log("Raw API response:", jsonData);
+        const [statsJson, fastestJson] = await Promise.all([
+          statsResponse.json(),
+          fastestResponse.json()
+        ]);
 
-        // Validate and transform the API response
-        const transformedData = jsonData
-          .map((item: any, index: number) => {
-            // Ensure all required fields are present and valid
-            const transformedItem = {
-              year: Number(item.year),
-              completed: Number(item.completed),
-              started: Number(item.started),
-              hours_spent: Number(item.hours_spent),
-              goldStar: Number(item.goldStar), // Transform and validate goldStar
-            };
+        // Transform stats data
+        const transformedStats = statsJson
+          .map((item: any) => ({
+            year: Number(item.year),
+            completed: Number(item.completed),
+            started: Number(item.started),
+            hours_spent: Number(item.hours_spent),
+            goldStar: Number(item.goldStar),
+          }))
+          .filter((item: CrosswordData | null): item is CrosswordData => {
+            return !Object.values(item).some(isNaN);
+          });
 
-            if (
-              isNaN(transformedItem.year) ||
-              isNaN(transformedItem.completed) ||
-              isNaN(transformedItem.started) ||
-              isNaN(transformedItem.hours_spent) ||
-              isNaN(transformedItem.goldStar)
-            ) {
-              console.error(`Invalid data at index ${index}:`, item);
-              return null;
-            }
-
-            return transformedItem;
-          })
-          .filter((item: CrosswordData | null): item is CrosswordData => item !== null);
-
-        if (transformedData.length === 0) {
-          throw new Error("No valid data points found in the response");
+        if (transformedStats.length === 0) {
+          throw new Error("No valid statistics data found");
         }
 
-        console.log("Transformed data:", transformedData);
-        setData(transformedData);
+        setStatsData(transformedStats);
+        setFastestData(fastestJson);
       } catch (err) {
         console.error("Error fetching data:", err);
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
         setLoading(false);
       }
@@ -79,7 +69,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -94,7 +83,6 @@ export default function Home() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="p-4 max-w-6xl mx-auto">
@@ -106,15 +94,12 @@ export default function Home() {
     );
   }
 
-  // Empty state
-  if (!data) {
+  if (!statsData || !fastestData) {
     return (
       <div className="p-4 max-w-6xl mx-auto">
         <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
           <h5 className="font-medium">No Data Available</h5>
-          <p className="text-sm">
-            No crossword statistics are currently available.
-          </p>
+          <p className="text-sm">No crossword statistics are currently available.</p>
         </div>
       </div>
     );
@@ -130,16 +115,14 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Debug info (consider removing in production) */}
-        <div className="mb-4 p-4 bg-gray-50 rounded-lg space-y-2 text-sm text-gray-600">
-          <h2>Debug Information:</h2>
-          <p>Data points: {data.length}</p>
-          <p>Years covered: {data.map((d) => d.year).join(", ")}</p>
+        {/* Fastest Times Component */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <FastestTimes data={fastestData} />
         </div>
 
         {/* Chart component */}
-        <div className="bg-white rounded-lg shadow-lg p-4">
-          <CrosswordStatsAlt data={data} />
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <CrosswordStatsAlt data={statsData} />
         </div>
       </div>
     </main>
