@@ -14,28 +14,6 @@ const pool = new Pool({
   }
 });
 
-export async function getPuzzleTimesByDay(dayIndex: number) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`
-      SELECT 
-        puzzle_id,
-        print_date,
-        solving_seconds,
-        title,
-        star
-      FROM public.crossword_stats
-      WHERE day_of_week_integer = $1
-        AND solved = true
-        AND puzzle_id NOT IN (12832, 11357)
-      ORDER BY print_date ASC
-    `, [dayIndex]);
-    return rows;
-  } finally {
-    client.release();
-  }
-}
-
 export async function getCrosswordStats() {
   const client = await pool.connect();
   try {
@@ -85,6 +63,62 @@ export async function getFastestTimes() {
         WHEN day_of_week_integer = 0 THEN 7 
         ELSE day_of_week_integer 
       END;
+    `);
+    return rows;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getPuzzleTimesByDay(dayIndex: number) {
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(`
+      SELECT 
+        puzzle_id,
+        print_date,
+        solving_seconds,
+        title,
+        star
+      FROM public.crossword_stats
+      WHERE day_of_week_integer = $1
+        AND solved = true
+        AND puzzle_id NOT IN (12832, 11357)
+      ORDER BY print_date ASC
+    `, [dayIndex]);
+    return rows;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getPuzzleCompletion() {
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(`
+      WITH yearly_data AS (
+        SELECT 
+          EXTRACT(YEAR FROM print_date)::integer as year,
+          day_of_week_name,
+          day_of_week_integer,
+          CASE WHEN star = 'Gold' THEN 'Gold' ELSE 'Regular' END as completion_type,
+          COUNT(*) as count
+        FROM public.crossword_stats
+        WHERE solved = true
+        GROUP BY 
+          EXTRACT(YEAR FROM print_date),
+          day_of_week_name,
+          day_of_week_integer,
+          CASE WHEN star = 'Gold' THEN 'Gold' ELSE 'Regular' END
+      )
+      SELECT 
+        year,
+        day_of_week_name,
+        day_of_week_integer,
+        completion_type,
+        count
+      FROM yearly_data
+      ORDER BY year, day_of_week_integer, completion_type;
     `);
     return rows;
   } finally {
