@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import CrosswordStatsAlt from "@/components/dashboard/crossword-stats/CrosswordStatsAlt";
 import FastestTimes from "@/components/dashboard/fastest-times/FastestTimes";
 import PuzzleCompletion from "@/components/dashboard/puzzle-completion/PuzzleCompletion";
+import YearToDate from "@/components/dashboard/year-to-date/YearToDate"; 
 import type { PuzzleCompletionData } from "@/components/dashboard/puzzle-completion/types";
-import Header from '@/components/Header'
+
 
 interface CrosswordData {
   year: number;
@@ -137,6 +138,11 @@ export default function Home() {
           <p className="text-gray-600">
             Yearly overview of crossword puzzle completion rates and time spent
           </p>
+        </div>
+
+        {/* YTD Component */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <YearToDate data={completionData} />
         </div>
 
         {/* Fastest Times Component */}
