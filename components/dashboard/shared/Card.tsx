@@ -3,14 +3,16 @@ import React from 'react';
 interface CardProps {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;  // Added onClick prop
+  onClick?: () => void;
+  style?: React.CSSProperties;  // Added style prop
 }
 
-const Card = ({ children, className = '', onClick }: CardProps) => {
+const Card = ({ children, className = '', onClick, style }: CardProps) => {
   return (
     <div 
-      className={`bg-gray-100 rounded-2xl p-4 shadow-sm ${className}`}
+      className={`rounded-2xl p-4 shadow-sm ${className}`}
       onClick={onClick}
+      style={style}
     >
       {children}
     </div>
