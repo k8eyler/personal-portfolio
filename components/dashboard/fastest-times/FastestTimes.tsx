@@ -3,6 +3,16 @@ import Card from '../shared/Card';
 import PuzzleTimeTrend from './PuzzleTimeTrend';
 import { FastestTimesProps, FastestPuzzle } from './types';
 
+const dayColors = {
+  'Monday': '#ffa600',    // Amber
+  'Tuesday': '#ff764a',   // Orange
+  'Wednesday': '#ef5675', // Reddish-Pink
+  'Thursday': '#bc5090',  // Purple
+  'Friday': '#7a5195',    // Indigo
+  'Saturday': '#374c80',  // Dark Blue
+  'Sunday': '#003f5c'     // Navy
+};
+
 const DayCard = ({ 
   dayOfWeek, 
   date, 
@@ -28,14 +38,17 @@ const DayCard = ({
     });
   };
 
+  const bgColor = dayColors[dayOfWeek as keyof typeof dayColors];
+
   return (
     <Card 
-      className="flex flex-col items-center justify-center text-center p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+      className="flex flex-col items-center justify-center text-center p-6 cursor-pointer transition-colors"
+      style={{ backgroundColor: bgColor }}
       onClick={() => onDayClick(dayIndex, dayOfWeek)}
     >
-      <h3 className="text-gray-600 text-lg mb-2">{dayOfWeek}</h3>
-      <p className="text-4xl font-light text-gray-700 mb-4">{formatTime(seconds)}</p>
-      <p className="text-gray-500">{formatDate(date)}</p>
+      <h3 className="text-white text-lg mb-2">{dayOfWeek}</h3>
+      <p className="text-4xl font-light text-white mb-4">{formatTime(seconds)}</p>
+      <p className="text-white/80">{formatDate(date)}</p>
     </Card>
   );
 };

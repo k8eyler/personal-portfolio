@@ -125,3 +125,21 @@ export async function getPuzzleCompletion() {
     client.release();
   }
 }
+export async function getDayTrends() {
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(`
+      SELECT 
+        print_date,
+        day_of_week_name,
+        solving_seconds
+      FROM public.crossword_stats
+      WHERE solved = true
+        AND puzzle_id NOT IN (12832, 11357, 10741)
+      ORDER BY print_date ASC;
+    `);
+    return rows;
+  } finally {
+    client.release();
+  }
+}

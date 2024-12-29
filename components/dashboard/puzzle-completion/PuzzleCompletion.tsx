@@ -24,7 +24,7 @@ interface PuzzleCompletionProps {
 }
 
 const DAYS_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const OUTER_COLORS = ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE', '#EFF6FF'];
+const OUTER_COLORS = ['#ffa600', '#ff764a', '#ef5675', '#bc5090', '#7a5195', '#374c80', '#003f5c'];
 const INNER_COLORS = {
   Gold: '#FCD34D',
   Regular: '#93C5FD'
@@ -135,7 +135,7 @@ const PuzzleCompletion: React.FC<PuzzleCompletionProps> = ({ data, className = '
     <div className={`space-y-4 ${className}`}>
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">
-          Puzzles Completed by Day
+          Portion of Completed Puzzles by Day of Week
           {selectedYear !== 'all' && <span className="ml-2 text-gray-600">({selectedYear})</span>}
         </h2>
         <select
