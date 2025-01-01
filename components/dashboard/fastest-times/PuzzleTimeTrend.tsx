@@ -33,11 +33,23 @@ const PuzzleTimeTrend: React.FC<PuzzleTimeTrendProps> = ({ data, dayName, onClos
   };
 
   const formatDate = (dateStr: string): string => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    // Split the date string into parts
+    const [year, month, day] = dateStr.split('-').map(num => parseInt(num, 10));
+    
+    // Create date parts object
+    const dateParts = {
+      year,
+      month: month - 1,  // JavaScript months are 0-based
+      day
+    };
+    
+    // Format using Intl.DateTimeFormat to avoid timezone issues
+    return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
-    });
+      year: 'numeric',
+      timeZone: 'UTC'  // Force UTC to prevent date shifting
+    }).format(new Date(Date.UTC(dateParts.year, dateParts.month, dateParts.day)));
   };
 
   // Calculate median of an array of numbers
@@ -72,7 +84,16 @@ const PuzzleTimeTrend: React.FC<PuzzleTimeTrendProps> = ({ data, dayName, onClos
 
   // Sort data by date and calculate running average and median
   const chartData = data
-    .sort((a, b) => new Date(a.print_date).getTime() - new Date(b.print_date).getTime())
+    .sort((a, b) => {
+      // Parse dates for comparison without timezone issues
+      const [aYear, aMonth, aDay] = a.print_date.split('-').map(num => parseInt(num, 10));
+      const [bYear, bMonth, bDay] = b.print_date.split('-').map(num => parseInt(num, 10));
+      
+      // Compare year, then month, then day
+      if (aYear !== bYear) return aYear - bYear;
+      if (aMonth !== bMonth) return aMonth - bMonth;
+      return aDay - bDay;
+    })
     .map((puzzle, index, array) => {
       // Get all puzzles up to this point
       const previousPuzzles = array.slice(0, index + 1);
