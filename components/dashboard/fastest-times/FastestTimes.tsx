@@ -30,12 +30,23 @@ const DayCard = ({
   };
 
   const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
+    // Split the date string into parts
+    const [year, month, day] = dateStr.split('-').map(num => parseInt(num, 10));
+    
+    // Create date parts object
+    const dateParts = {
+      year,
+      month: month - 1,  // JavaScript months are 0-based
+      day
+    };
+    
+    // Format using Intl.DateTimeFormat to avoid timezone issues
+    return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
-    });
+      year: 'numeric',
+      timeZone: 'UTC'  // Force UTC to prevent date shifting
+    }).format(new Date(Date.UTC(dateParts.year, dateParts.month, dateParts.day)));
   };
 
   const bgColor = dayColors[dayOfWeek as keyof typeof dayColors];
