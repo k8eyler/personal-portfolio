@@ -1,18 +1,19 @@
 import Image from 'next/image'
 import { ExternalLinkIcon } from 'lucide-react'
+import Link from 'next/link'
 
 const projects = [
   {
-    title: 'Project 1',
-    description: 'A brief description of your first project.',
-    image: '/placeholder.svg?height=200&width=300',
-    link: '#',
+    title: 'NYT Crossword Stats',
+    description: 'Interactive dashboard to track my New York Times crossword solving progress over the years.',
+    image: '/crossword_project_clip.jpg?height=200&width=300',
+    link: 'crosswords',
   },
   {
     title: 'Project 2',
     description: 'A brief description of your second project.',
     image: '/placeholder.svg?height=200&width=300',
-    link: '#',
+    link: '/crosswords',
   },
   // Add more projects as needed
 ]
