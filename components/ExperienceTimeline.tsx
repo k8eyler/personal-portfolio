@@ -84,6 +84,16 @@ const personalExperiences = [
       'Unsure of what to do with remaining 31 lbs'
     ]
   },
+  {
+    logo: "/katecheese.jpg",
+    title: '62lb Block of Parmesan Acquired',
+    company: '9/27/2023',
+    period: '',
+    achievements: [
+      'Life long goal of at-home parmesan wheel pasta achieved',
+      'Unsure of what to do with remaining 31 lbs'
+    ]
+  },
   // Add more personal experiences following the same structure
 ];
 
