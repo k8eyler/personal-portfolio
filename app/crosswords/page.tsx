@@ -6,6 +6,7 @@ import FastestTimes from "@/components/dashboard/fastest-times/FastestTimes";
 import PuzzleCompletion from "@/components/dashboard/puzzle-completion/PuzzleCompletion";
 import YearToDate from "@/components/dashboard/year-to-date/YearToDate"; 
 import DayTrends from "@/components/dashboard/day-trends/DayTrends";
+import FastestTimeHeatmap from "@/components/dashboard/fastest-times/FastestTimeHeatmap";
 import type { PuzzleCompletionData } from "@/components/dashboard/puzzle-completion/types";
 
 interface CrosswordData {
@@ -162,6 +163,11 @@ export default function Home() {
        {/* Fastest Times Component */}
        <div className="bg-white rounded-lg shadow-lg p-6">
          <FastestTimes data={fastestData} />
+       </div>
+
+       {/* Fastest Times Heatmap */}
+       <div className="bg-white rounded-lg shadow-lg p-6">
+         <FastestTimeHeatmap data={fastestData} />
        </div>
 
        {/* Daily Trends Component */}

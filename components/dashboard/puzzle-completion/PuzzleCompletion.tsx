@@ -24,7 +24,7 @@ interface PuzzleCompletionProps {
 }
 
 const DAYS_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const OUTER_COLORS = ['#ffa600', '#ff764a', '#ef5675', '#bc5090', '#7a5195', '#374c80', '#003f5c'];
+const OUTER_COLORS = ['#fc716b', '#fb9b00', '#fbd300', '#b5e352', '#b2ded8', '#6493e6', '#b4a8ff'];
 const INNER_COLORS = {
   Gold: '#FCD34D',
   Regular: '#93C5FD'
@@ -151,7 +151,7 @@ const PuzzleCompletion: React.FC<PuzzleCompletionProps> = ({ data, className = '
         </select>
       </div>
 
-      <div className="h-[500px] min-h-[400px] bg-gray-50">
+      <div className="h-[500px] min-h-[400px]">
         <ResponsiveContainer width="100%" height={500}>
           <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
             {/* Outer ring - Days of week */}

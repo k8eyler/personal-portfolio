@@ -61,14 +61,14 @@ const DayTrends: React.FC<DayTrendsProps> = ({ data }) => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const dayColors: Record<string, string> = {
-    'Monday': '#ffa600',    // Amber
-    'Tuesday': '#ff764a',   // Orange
-    'Wednesday': '#ef5675', // Reddish-Pink
-    'Thursday': '#bc5090',  // Purple
-    'Friday': '#7a5195',    // Indigo
-    'Saturday': '#374c80',  // Dark Blue
-    'Sunday': '#003f5c'     // Navy
+  const dayColors = {
+    'Monday': '#fc716b',    // Amber
+    'Tuesday': '#fb9b00',   // Orange
+    'Wednesday': '#fbd300', // Reddish-Pink
+    'Thursday': '#b5e352',  // Purple
+    'Friday': '#b2ded8',    // Indigo
+    'Saturday': '#6493e6',  // Dark Blue
+    'Sunday': '#b4a8ff'     // Navy
   };
 
   const getWeekStart = (dateStr: string): string => {
