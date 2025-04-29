@@ -96,6 +96,8 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
 
   return (
     <div className="space-y-4">
+      <h2 className="text-xl font-semibold text-gray-800">Puzzles Completed by Year vs Hours Spent</h2>
+      <p className="text-gray-600 mb-4 -mt-1">Hover for completion percentage and annual stats</p>
       <div className="h-96 w-full border border-gray-200 rounded-lg overflow-hidden bg-white">
         <ResponsiveContainer>
           <ComposedChart
@@ -147,6 +149,7 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
               name="Gold Star Puzzles"
               fill="#FCD34D"
               stackId="puzzles"
+              radius={[2, 2, 0, 0]}
             />
             <Bar
               yAxisId="puzzles"
@@ -154,6 +157,7 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
               name="Completed Puzzles"
               fill="#2563EB"
               stackId="puzzles"
+              radius={[2, 2, 0, 0]}
             />
             <Bar
               yAxisId="puzzles"
@@ -161,12 +165,14 @@ const CrosswordStatsAlt: React.FC<CrosswordStatsProps> = ({ data }) => {
               name="Started Puzzles"
               fill="#93C5FD"
               stackId="puzzles"
+              radius={[2, 2, 0, 0]}
             />
             <Bar
               yAxisId="time"
               dataKey="hours_spent"
               name="Hours Spent"
-              fill="#7C3AED"
+              fill="#a8e142"
+              radius={[2, 2, 0, 0]}
             />
           </ComposedChart>
         </ResponsiveContainer>

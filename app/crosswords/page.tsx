@@ -22,6 +22,7 @@ interface FastestTimeData {
  day_of_week_integer: number;
  solving_seconds: number;
  day_of_week_name: string;
+ gold_star: boolean;
 }
 
 interface DailyTrendData {
@@ -144,7 +145,7 @@ export default function Home() {
        <div className="mb-8">
          <h1 className="text-3xl font-bold mb-2">Crossword Statistics</h1>
          <p className="text-gray-600">
-           Yearly overview of crossword puzzle completion rates and time spent
+           Exploring my NYT crossword completion stats over the years
          </p>
        </div>
 

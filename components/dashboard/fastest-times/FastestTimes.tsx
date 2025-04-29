@@ -4,13 +4,13 @@ import PuzzleTimeTrend from './PuzzleTimeTrend';
 import { FastestTimesProps, FastestPuzzle } from './types';
 
 const dayColors = {
-  'Monday': '#ffa600',    // Amber
-  'Tuesday': '#ff764a',   // Orange
-  'Wednesday': '#ef5675', // Reddish-Pink
-  'Thursday': '#bc5090',  // Purple
-  'Friday': '#7a5195',    // Indigo
-  'Saturday': '#374c80',  // Dark Blue
-  'Sunday': '#003f5c'     // Navy
+  'Monday': '#fc716b',    // Amber
+  'Tuesday': '#fb9b00',   // Orange
+  'Wednesday': '#fbd300', // Reddish-Pink
+  'Thursday': '#b5e352',  // Purple
+  'Friday': '#b2ded8',    // Indigo
+  'Saturday': '#6493e6',  // Dark Blue
+  'Sunday': '#b4a8ff'     // Navy
 };
 
 const DayCard = ({ 
@@ -79,7 +79,8 @@ const FastestTimes: React.FC<FastestTimesProps> = ({ data, className = '' }) => 
           dayOfWeek: puzzle.day_of_week_name,
           date: puzzle.print_date,
           seconds: puzzle.solving_seconds,
-          dayIndex: puzzle.day_of_week_integer
+          dayIndex: puzzle.day_of_week_integer,
+          gold_star: puzzle.gold_star
         };
       }
     });
@@ -106,7 +107,8 @@ const FastestTimes: React.FC<FastestTimesProps> = ({ data, className = '' }) => 
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Fastest Times by Day</h2>
+      <h2 className="text-xl font-semibold text-gray-800">Fastest Times by Day</h2>
+      <p className="text-gray-600 mb-4 -mt-1">Explore mean and median completion times within each day tile</p>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
         {fastestPuzzles.map((puzzle) => (
           <DayCard 
