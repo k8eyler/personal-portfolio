@@ -4,12 +4,14 @@ export interface PuzzleRecord {
     day_of_week_integer: number;
     solving_seconds: number;
     day_of_week_name: string;
+    gold_star: boolean;
   }
   
   export interface FastestPuzzle {
     dayOfWeek: string;
     date: string;
     seconds: number;
+    gold_star: boolean;
   }
   
   export interface FastestTimesProps {
