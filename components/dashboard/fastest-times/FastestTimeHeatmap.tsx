@@ -212,10 +212,14 @@ const FastestTimeHeatmap: React.FC<FastestTimesProps> = ({ data }) => {
     const newTopTimesData: Record<number, any[]> = {};
     let earliestDate: Date | null = null;
     
+    // Create a new map for all gold stars we find
+    const allGoldStars: GoldStarMap = {};
+    
     try {
       console.log('Fetching top times data for all days...');
+      console.log('Current gold stars before fetch:', Object.keys(goldStarDates).filter(k => goldStarDates[k]).length);
       
-      // Fetch top times puzzles for each day (0-6)
+      // First pass: get all data and find gold stars across ALL puzzles
       for (let dayIndex = 0; dayIndex <= 6; dayIndex++) {
         console.log(`Fetching data for day ${dayIndex}...`);
         const response = await fetch(`/api/puzzle-times/${dayIndex}`);
@@ -228,65 +232,115 @@ const FastestTimeHeatmap: React.FC<FastestTimesProps> = ({ data }) => {
         const dayPuzzles = await response.json();
         console.log(`Received ${dayPuzzles.length} puzzles for day ${dayIndex}`);
         
-        // Sort by solving time (fastest first)
-        dayPuzzles.sort((a: any, b: any) => a.solving_seconds - b.solving_seconds);
+        // CRITICAL: Scan ALL puzzles for gold stars, not just top 10/25
+        console.log(`Scanning ALL ${dayPuzzles.length} puzzles for day ${dayIndex} for gold stars`);
         
-        // Store top puzzles for this day
-        const maxToStore = 25; // Store up to 25 for both top10 and top25 views
-        const topPuzzles = dayPuzzles.slice(0, Math.min(maxToStore, dayPuzzles.length));
-        newTopTimesData[dayIndex] = topPuzzles;
+        // Count gold stars in ALL puzzles for this day
+        let dayGoldStarCount = 0;
         
-        console.log(`Stored ${topPuzzles.length} top puzzles for day ${dayIndex}`);
-        
-        // Find the earliest date in the top times
-        topPuzzles.forEach((puzzle: any) => {
-          if (puzzle.print_date) {
-            const puzzleDate = new Date(puzzle.print_date);
-            if (!isNaN(puzzleDate.getTime())) {
-              if (!earliestDate || puzzleDate < earliestDate) {
-                earliestDate = puzzleDate;
-              }
+        // Scan every puzzle for gold stars
+        dayPuzzles.forEach((puzzle: any) => {
+          if (puzzle && puzzle.print_date) {
+            const dateStr = puzzle.print_date.split('T')[0];
+            
+            // Check if it has a gold star
+            if (puzzle.gold_star) {
+              allGoldStars[dateStr] = true;
+              dayGoldStarCount++;
+              console.log(`Found gold star in day ${dayIndex} for date ${dateStr}`);
             }
           }
         });
+        
+        console.log(`Day ${dayIndex}: Found ${dayGoldStarCount} gold stars in ${dayPuzzles.length} puzzles`);
+        
+        // Store data for top puzzles selection
+        newTopTimesData[dayIndex] = dayPuzzles;
       }
       
-      // Create sets for top 10 and top 25 dates
+      // Log all gold stars found
+      const goldStarCount = Object.keys(allGoldStars).filter(k => allGoldStars[k]).length;
+      console.log(`Total gold stars found across ALL puzzles: ${goldStarCount}`);
+      
+      // Second pass: create top 10/25 maps and process earliest date
       const top10Map: DateMap = {};
       const top25Map: DateMap = {};
       
-      Object.values(newTopTimesData).forEach(puzzles => {
-        // Add top 10
-        puzzles.slice(0, Math.min(10, puzzles.length)).forEach((puzzle: any) => {
-          if (puzzle.print_date) {
-            const dateStr = puzzle.print_date.split('T')[0];
-            top10Map[dateStr] = true;
-          }
-        });
+      // Merge with existing gold stars
+      const goldStarsUpdated = { ...goldStarDates, ...allGoldStars };
+      
+      // Now that we have all gold stars, process top puzzles
+      Object.entries(newTopTimesData).forEach(([dayIndex, puzzles]) => {
+        // Sort by solving time (fastest first) - we need to do this because the API might not sort them
+        puzzles.sort((a: any, b: any) => a.solving_seconds - b.solving_seconds);
         
-        // Add top 25
-        puzzles.slice(0, Math.min(25, puzzles.length)).forEach((puzzle: any) => {
-          if (puzzle.print_date) {
-            const dateStr = puzzle.print_date.split('T')[0];
-            top25Map[dateStr] = true;
+        console.log(`Processing top times for day ${dayIndex} (${puzzles.length} puzzles)`);
+        
+        // Process each puzzle for this day's top times
+        puzzles.slice(0, Math.min(25, puzzles.length)).forEach((puzzle: any, i: number) => {
+          if (!puzzle.print_date) return;
+          
+          const dateStr = puzzle.print_date.split('T')[0];
+          
+          // Add to appropriate maps based on ranking
+          if (i < 10) {
+            // Top 10
+            top10Map[dateStr] = true;
+            
+            // Debug gold star status
+            if (goldStarsUpdated[dateStr]) {
+              console.log(`Top 10 puzzle for day ${dayIndex} (rank #${i+1}) has gold star: ${dateStr}`);
+            }
+          }
+          
+          // Top 25
+          top25Map[dateStr] = true;
+          
+          // Debug gold star for all top 25
+          if (goldStarsUpdated[dateStr]) {
+            console.log(`Top 25 puzzle for day ${dayIndex} (rank #${i+1}) has gold star: ${dateStr}`);
+          }
+          
+          // Track earliest date
+          const puzzleDate = new Date(puzzle.print_date);
+          if (!isNaN(puzzleDate.getTime())) {
+            if (!earliestDate || puzzleDate < earliestDate) {
+              earliestDate = puzzleDate;
+            }
           }
         });
       });
-      
+
       // Set the earliest top times date for display range calculation
       if (earliestDate) {
         setEarliestTopTimesDate(earliestDate);
-        // Fix TypeScript error by avoiding date methods
-        console.log(`Earliest top times date: ${earliestDate ? 'valid date' : 'invalid date'}`);
+        console.log(`Earliest top times date found: ${earliestDate ? 'yes' : 'no'}`);
       }
       
       // Store the top dates maps
       setTop10Dates(top10Map);
       setTop25Dates(top25Map);
-      setTopTimesData(newTopTimesData);
+      
+      // Always update gold stars with all the ones we found
+      const oldCount = Object.keys(goldStarDates).filter(k => goldStarDates[k]).length;
+      const newCount = Object.keys(goldStarsUpdated).filter(k => goldStarsUpdated[k]).length;
+      console.log(`Updating gold stars: ${oldCount} -> ${newCount}`);
+      
+      // CRITICAL: Update the gold star dates with ALL the ones we found
+      setGoldStarDates(goldStarsUpdated);
+      
+      // Only store the top puzzles for each day
+      const trimmedTopTimesData: Record<number, any[]> = {};
+      Object.entries(newTopTimesData).forEach(([dayIndex, puzzles]) => {
+        const topPuzzles = puzzles.slice(0, Math.min(25, puzzles.length));
+        trimmedTopTimesData[parseInt(dayIndex)] = topPuzzles;
+      });
+      
+      setTopTimesData(trimmedTopTimesData);
       
       console.log(`Processed ${Object.keys(top10Map).length} top 10 dates`);
       console.log(`Processed ${Object.keys(top25Map).length} top 25 dates`);
+      console.log(`Final gold star count: ${newCount}`);
       console.log('Completed fetching top times data for all days');
     } catch (error) {
       console.error('Error fetching top puzzles:', error);
@@ -451,11 +505,11 @@ const FastestTimeHeatmap: React.FC<FastestTimesProps> = ({ data }) => {
   const getViewDescription = () => {
     switch (viewMode) {
       case 'fastest':
-        return 'Colored squares indicate when you achieved your fastest time for that day of the week';
+        return 'Colored squares indicate fastest time for that day of the week';
       case 'top10':
-        return 'Colored squares indicate your top 10 fastest times for each day of the week';
+        return 'Colored squares indicate top 10 fastest times for each day of the week';
       case 'top25':
-        return 'Colored squares indicate your top 25 fastest times for each day of the week';
+        return 'Colored squares indicate top 25 fastest times for each day of the week';
     }
   };
 
