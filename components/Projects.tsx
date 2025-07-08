@@ -7,13 +7,13 @@ const projects = [
     title: 'NYT Crossword Stats',
     description: 'Interactive dashboard to track my New York Times crossword solving progress over the years.',
     image: '/crossword_project_clip.jpg?height=200&width=300',
-    link: 'crosswords',
+    link: '/crosswords',
   },
   {
-    title: 'Project 2',
-    description: 'A brief description of your second project.',
+    title: 'RAG Chatbot',
+    description: 'A chatbot I trained on my own data using RAG.',
     image: '/placeholder.svg?height=200&width=300',
-    link: '/crosswords',
+    link: '/chatbot',
   },
   // Add more projects as needed
 ]

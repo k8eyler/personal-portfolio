@@ -11,6 +11,7 @@ export default function Header() {
           <Link href="/" className="hover:text-gray-600">About</Link>
           <Link href="/contact" className="hover:text-gray-600">Contact</Link>
           <Link href="/crosswords" className="hover:text-gray-600">Crossword Stuff</Link>
+          <Link href="/chatbot" className="hover:text-gray-600">Chatbot</Link>
         </nav>
       </div>
     </header>
