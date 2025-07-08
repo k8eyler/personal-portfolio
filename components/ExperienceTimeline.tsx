@@ -85,13 +85,13 @@ const personalExperiences = [
     ]
   },
   {
-    logo: "/katecheese.jpg",
-    title: '62lb Block of Parmesan Acquired',
-    company: '9/27/2023',
+    logo: "/scooter.jpg",
+    title: 'Scooter Joins the Family',
+    company: '4/10/2020',
     period: '',
     achievements: [
-      'Life long goal of at-home parmesan wheel pasta achieved',
-      'Unsure of what to do with remaining 31 lbs'
+      'I now have a tiny assistant',
+      'His technical skills remain to be seen'
     ]
   },
   // Add more personal experiences following the same structure
