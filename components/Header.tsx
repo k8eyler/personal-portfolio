@@ -59,6 +59,13 @@ export default function Header() {
                 >
                   Chatbot 2.0 (and then some)
                 </Link>
+                <Link
+                  href="/lavalamps"
+                  onClick={() => setProjectsOpen(false)}
+                  className="block px-4 py-2 text-foreground/80 hover:text-foreground hover:bg-white/10 transition-colors"
+                >
+                  Lava Lamps
+                </Link>
               </div>
             )}
           </div>

@@ -8,12 +8,13 @@ const Toggle = ({ isChecked, onChange }) => (
     className={`
       relative inline-flex h-8 w-16 items-center rounded-full
       transition-colors duration-200 ease-in-out focus:outline-none
-      ${isChecked ? 'bg-primary' : 'bg-muted'}
+      bg-background/60 backdrop-blur-xl border border-white/10 shadow-sm
     `}
   >
     <span
       className={`
-        inline-block h-6 w-6 transform rounded-full bg-card transition-transform
+        inline-block h-6 w-6 transform rounded-full transition-transform
+        bg-background/80 backdrop-blur-xl border border-white/20 shadow-sm
         ${isChecked ? 'translate-x-9' : 'translate-x-1'}
       `}
     />
