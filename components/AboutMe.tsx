@@ -46,16 +46,16 @@ export default function AboutMe() {
       <div className="grid grid-cols-1 gap-24">
         {/* Top section with image and intro */}
         <div className="flex flex-col md:flex-row items-start gap-24">
-          <div className="w-full md:w-72 aspect-square relative overflow-hidden">
+          <div className="w-full md:w-72 aspect-[5/7] relative overflow-hidden">
             <Image
               src="/starpic.png"
               alt="Profile photo"
               fill
-              className="object-cover"
+              className="object-contain -translate-y-8"
             />
           </div>
           
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 mt-8">
             <div className="space-y-2">
               <p className="text-muted-foreground text-xl tracking-wide">Hi, I'm</p>
               <h1 className="text-6xl font-bold tracking-wider text-foreground">Kate</h1>

@@ -106,7 +106,7 @@ export default function Home() {
 
  if (loading) {
    return (
-     <div className="flex items-center justify-center min-h-screen">
+     <div className="flex items-center justify-center min-h-screen bg-background">
        <div className="animate-pulse flex space-x-4">
          <div className="h-12 w-12 rounded-full bg-blue-400"></div>
          <div className="space-y-4">
@@ -144,39 +144,39 @@ export default function Home() {
    <main className="min-h-screen p-8">
      <div className="max-w-6xl mx-auto space-y-8">
        <div className="mb-8">
-         <h1 className="text-3xl font-bold mb-2">Crossword Statistics</h1>
-         <p className="text-gray-600">
+         <h1 className="text-3xl font-bold mb-2 text-foreground">Crossword Statistics</h1>
+         <p className="text-muted-foreground">
            Exploring my NYT crossword completion stats over the years
          </p>
        </div>
 
        {/* YTD Component */}
-       <div className="bg-white rounded-lg shadow-lg p-6">
+       <div className="bg-card rounded-lg shadow-lg border border-border p-6">
          <YearToDate data={completionData} />
        </div>
 
        {/* Chart component */}
-       <div className="bg-white rounded-lg shadow-lg p-6">
+       <div className="bg-card rounded-lg shadow-lg border border-border p-6">
          <CrosswordStatsAlt data={statsData} />
        </div>
 
        {/* Fastest Times Component */}
-       <div className="bg-white rounded-lg shadow-lg p-6">
+       <div className="bg-card rounded-lg shadow-lg border border-border p-6">
          <FastestTimes data={fastestData} />
        </div>
 
        {/* Fastest Times Heatmap */}
-       <div className="bg-white rounded-lg shadow-lg p-6">
+       <div className="bg-card rounded-lg shadow-lg border border-border p-6">
          <FastestTimeHeatmap data={fastestData} />
        </div>
 
        {/* Daily Trends Component */}
-       <div className="bg-white rounded-lg shadow-lg p-6">
+       <div className="bg-card rounded-lg shadow-lg border border-border p-6">
          <DayTrends data={trendData} />
        </div>
        
        {/* Puzzle Completion Component */}
-       <div className="bg-white rounded-lg shadow-lg p-6">
+       <div className="bg-card rounded-lg shadow-lg border border-border p-6">
          <PuzzleCompletion data={completionData} />
        </div>
      </div>

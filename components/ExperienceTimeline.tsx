@@ -74,6 +74,16 @@ const professionalExperiences = [
 
 const personalExperiences = [
   {
+    logo: "/travel.png",
+    title: 'Flew 3.5x Around the World',
+    company: '2025',
+    period: '',
+    achievements: [
+      'Spent 8 days 8 minutes in the air',
+      'Highlights: Cannes, Bangkok, Doha, Crete '
+    ]
+  },
+  {
     logo: "/goldstar.jpg",
     title: '1000th Crossword Solved',
     company: '12/22/2024',
@@ -81,6 +91,16 @@ const personalExperiences = [
     achievements: [
       'Sunday puzzle, completed in 25.7 minutes',
       '4th fastest Sunday puzzle to date'
+    ]
+  },
+  {
+    logo: "/skiing.jpg",
+    title: 'Joined Guiness Book of World Records',
+    company: '4/28/2024',
+    period: '',
+    achievements: [
+      'Most Guy Fieris skiing simultaneously (328)',
+      'Minimal ice stuck in my goatee'
     ]
   },
   {
