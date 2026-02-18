@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16213e"/>
+      <stop offset="100%" style="stop-color:#0f3460"/>
+    </linearGradient>
+    <linearGradient id="botBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c83ff"/>
+      <stop offset="100%" style="stop-color:#5a5fff"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d2ff;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#00d2ff;stop-opacity:0"/>
+    </linearGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg)"/>
+
+  <!-- Floating particles/dots -->
+  <circle cx="100" cy="80" r="3" fill="#00d2ff" opacity="0.4"/>
+  <circle cx="200" cy="400" r="2" fill="#7c83ff" opacity="0.5"/>
+  <circle cx="650" cy="100" r="4" fill="#e94560" opacity="0.3"/>
+  <circle cx="720" cy="350" r="2.5" fill="#00d2ff" opacity="0.4"/>
+  <circle cx="50" cy="300" r="3" fill="#7c83ff" opacity="0.3"/>
+  <circle cx="750" cy="200" r="2" fill="#ffd700" opacity="0.4"/>
+  <circle cx="350" cy="50" r="2.5" fill="#e94560" opacity="0.3"/>
+  <circle cx="500" cy="450" r="3" fill="#7c83ff" opacity="0.4"/>
+
+  <!-- Document pages floating (representing RAG knowledge base) -->
+  <!-- Doc 1 - left -->
+  <g transform="translate(80, 120) rotate(-15)" opacity="0.7" filter="url(#shadow)">
+    <rect width="70" height="90" rx="5" fill="#fff" opacity="0.9"/>
+    <rect x="10" y="12" width="50" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="22" width="40" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="32" width="48" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="42" width="30" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="55" width="50" height="4" rx="2" fill="#e94560" opacity="0.5"/>
+    <rect x="10" y="65" width="45" height="4" rx="2" fill="#c8c8e0"/>
+  </g>
+
+  <!-- Doc 2 - right -->
+  <g transform="translate(620, 90) rotate(10)" opacity="0.7" filter="url(#shadow)">
+    <rect width="70" height="90" rx="5" fill="#fff" opacity="0.9"/>
+    <rect x="10" y="12" width="50" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="22" width="35" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="32" width="48" height="4" rx="2" fill="#00d2ff" opacity="0.5"/>
+    <rect x="10" y="42" width="42" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="55" width="50" height="4" rx="2" fill="#c8c8e0"/>
+    <rect x="10" y="65" width="28" height="4" rx="2" fill="#c8c8e0"/>
+  </g>
+
+  <!-- Doc 3 - bottom left -->
+  <g transform="translate(130, 340) rotate(8)" opacity="0.6" filter="url(#shadow)">
+    <rect width="60" height="75" rx="4" fill="#fff" opacity="0.85"/>
+    <rect x="8" y="10" width="44" height="3.5" rx="2" fill="#c8c8e0"/>
+    <rect x="8" y="19" width="36" height="3.5" rx="2" fill="#c8c8e0"/>
+    <rect x="8" y="28" width="40" height="3.5" rx="2" fill="#ffd700" opacity="0.5"/>
+    <rect x="8" y="37" width="30" height="3.5" rx="2" fill="#c8c8e0"/>
+    <rect x="8" y="49" width="44" height="3.5" rx="2" fill="#c8c8e0"/>
+  </g>
+
+  <!-- Doc 4 - bottom right -->
+  <g transform="translate(590, 320) rotate(-8)" opacity="0.6" filter="url(#shadow)">
+    <rect width="60" height="75" rx="4" fill="#fff" opacity="0.85"/>
+    <rect x="8" y="10" width="44" height="3.5" rx="2" fill="#c8c8e0"/>
+    <rect x="8" y="19" width="38" height="3.5" rx="2" fill="#7c83ff" opacity="0.5"/>
+    <rect x="8" y="28" width="44" height="3.5" rx="2" fill="#c8c8e0"/>
+    <rect x="8" y="37" width="25" height="3.5" rx="2" fill="#c8c8e0"/>
+    <rect x="8" y="49" width="40" height="3.5" rx="2" fill="#c8c8e0"/>
+  </g>
+
+  <!-- Connection lines from docs to bot (dashed, representing retrieval) -->
+  <line x1="150" y1="180" x2="330" y2="230" stroke="#00d2ff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+  <line x1="650" y1="160" x2="470" y2="230" stroke="#00d2ff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+  <line x1="170" y1="360" x2="330" y2="290" stroke="#7c83ff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.3"/>
+  <line x1="610" y1="350" x2="470" y2="290" stroke="#7c83ff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.3"/>
+
+  <!-- Main chatbot body -->
+  <g filter="url(#shadow)">
+    <!-- Robot body -->
+    <rect x="320" y="180" width="160" height="140" rx="30" fill="url(#botBody)"/>
+
+    <!-- Antenna -->
+    <line x1="400" y1="180" x2="400" y2="150" stroke="#7c83ff" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="400" cy="142" r="8" fill="#00d2ff" filter="url(#softGlow)"/>
+
+    <!-- Eyes -->
+    <ellipse cx="365" cy="235" rx="18" ry="20" fill="#fff"/>
+    <ellipse cx="435" cy="235" rx="18" ry="20" fill="#fff"/>
+    <!-- Pupils -->
+    <circle cx="370" cy="233" r="9" fill="#1a1a2e"/>
+    <circle cx="440" cy="233" r="9" fill="#1a1a2e"/>
+    <!-- Eye shine -->
+    <circle cx="374" cy="229" r="3.5" fill="#fff"/>
+    <circle cx="444" cy="229" r="3.5" fill="#fff"/>
+
+    <!-- Happy mouth -->
+    <path d="M 370 272 Q 400 295 430 272" stroke="#1a1a2e" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <!-- Blush cheeks -->
+    <ellipse cx="348" cy="265" rx="12" ry="8" fill="#e94560" opacity="0.35"/>
+    <ellipse cx="452" cy="265" rx="12" ry="8" fill="#e94560" opacity="0.35"/>
+  </g>
+
+  <!-- Chat bubbles -->
+  <!-- User bubble -->
+  <g filter="url(#shadow)">
+    <rect x="230" y="360" width="140" height="45" rx="20" fill="#e94560" opacity="0.9"/>
+    <rect x="245" y="374" width="60" height="5" rx="2.5" fill="#fff" opacity="0.7"/>
+    <rect x="245" y="385" width="40" height="5" rx="2.5" fill="#fff" opacity="0.5"/>
+    <polygon points="310,405 320,420 330,405" fill="#e94560" opacity="0.9"/>
+  </g>
+
+  <!-- Bot response bubble -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="355" width="160" height="55" rx="22" fill="#00d2ff" opacity="0.9"/>
+    <rect x="438" y="370" width="70" height="5" rx="2.5" fill="#fff" opacity="0.7"/>
+    <rect x="438" y="381" width="55" height="5" rx="2.5" fill="#fff" opacity="0.5"/>
+    <rect x="438" y="392" width="45" height="5" rx="2.5" fill="#fff" opacity="0.5"/>
+    <polygon points="465,410 455,425 475,410" fill="#00d2ff" opacity="0.9"/>
+  </g>
+
+  <!-- Sparkles around the bot -->
+  <g fill="#ffd700" opacity="0.7">
+    <polygon points="280,170 283,178 291,178 285,183 287,191 280,186 273,191 275,183 269,178 277,178" transform="scale(0.7)"/>
+    <polygon points="750,310 753,318 761,318 755,323 757,331 750,326 743,331 745,323 739,318 747,318" transform="scale(0.6)"/>
+    <polygon points="520,230 522,236 528,236 523,240 525,246 520,242 515,246 517,240 512,236 518,236" transform="scale(0.5) translate(460, -50)"/>
+  </g>
+
+  <!-- "RAG" label -->
+  <g transform="translate(400, 460)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00d2ff" text-anchor="middle" letter-spacing="6" opacity="0.6">R A G   C H A T B O T</text>
+  </g>
+</svg>

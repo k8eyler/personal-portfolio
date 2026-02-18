@@ -8,12 +8,12 @@ const Toggle = ({ isChecked, onChange }) => (
     className={`
       relative inline-flex h-8 w-16 items-center rounded-full
       transition-colors duration-200 ease-in-out focus:outline-none
-      ${isChecked ? 'bg-blue-600' : 'bg-gray-200'}
+      ${isChecked ? 'bg-primary' : 'bg-muted'}
     `}
   >
     <span
       className={`
-        inline-block h-6 w-6 transform rounded-full bg-white transition-transform
+        inline-block h-6 w-6 transform rounded-full bg-card transition-transform
         ${isChecked ? 'translate-x-9' : 'translate-x-1'}
       `}
     />
@@ -22,10 +22,19 @@ const Toggle = ({ isChecked, onChange }) => (
 
 const professionalExperiences = [
   {
+    logo: "/archsoftware_logo.jpeg",
+    title: 'Account Manager',
+    company: 'Arch',
+    period: '11/2025 - Present',
+    achievements: [
+      'Manage a book of flagship investment firms, with $10.3B assets under administration (AUM)',
+    ]
+  },
+  {
     logo: "/hive.jpg",
     title: 'Operations Manager',
     company: 'Hive Gaming',
-    period: '11/2023 - Present',
+    period: '11/2023 - 11/2025',
     achievements: [
       'Lead CRM overhaul to achieve increased internal visibility and communication, increased email outreach 87% in 5 months',
       'Designed and delivered new revenue reporting dashboard, decreasing time spent on payroll by 60%'
@@ -104,15 +113,15 @@ export default function ExperienceTimeline() {
   return (
     <section className="max-w-3xl mx-auto p-6">
       <div className="flex items-center justify-center space-x-8 mb-12">
-        <div className="flex items-center space-x-4">
-          <span className={`text-3xl ${isProfessional ? 'font-semibold' : 'text-gray-500'}`}>
+        <div className="flex items-center gap-4">
+          <span className={`text-2xl md:text-3xl font-semibold transition-colors ${isProfessional ? 'text-foreground' : 'text-muted-foreground'}`}>
             Professional
           </span>
           <Toggle
             isChecked={!isProfessional}
             onChange={(checked) => setIsProfessional(!checked)}
           />
-          <span className={`text-3xl ${!isProfessional ? 'font-semibold' : 'text-gray-500'}`}>
+          <span className={`text-2xl md:text-3xl font-semibold transition-colors ${!isProfessional ? 'text-foreground' : 'text-muted-foreground'}`}>
             Personal
           </span>
         </div>
@@ -122,7 +131,7 @@ export default function ExperienceTimeline() {
         {experiences.map((exp, index) => (
           <div key={index} className={`flex items-start gap-8 ${!isProfessional ? 'flex-row-reverse' : ''}`}>
             <div className="flex flex-col items-center">
-              <div className="w-40 h-40 bg-white rounded-lg shadow-md flex items-center justify-center">
+              <div className="w-40 h-40 bg-card rounded-lg shadow-md border border-border flex items-center justify-center">
                 <img 
                   src={exp.logo}
                   alt={`${exp.company} logo`}
@@ -130,20 +139,20 @@ export default function ExperienceTimeline() {
                 />
               </div>
               {index !== experiences.length - 1 && (
-                <div className="w-0.5 h-full bg-blue-200 mt-4" />
+                <div className="w-0.5 h-full bg-primary/30 mt-4" />
               )}
             </div>
             
             <div className={`flex-1 pt-2 ${!isProfessional ? 'text-right' : ''}`}>
-              <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
-              <p className="text-gray-700 font-medium">{exp.company}</p>
-              <p className="text-gray-500 text-sm mb-4">{exp.period}</p>
+              <h3 className="text-xl font-semibold text-foreground">{exp.title}</h3>
+              <p className="text-foreground font-medium">{exp.company}</p>
+              <p className="text-muted-foreground text-sm mb-4">{exp.period}</p>
               
               <ul className={`space-y-2 ${!isProfessional ? 'ml-auto' : ''}`}>
                 {exp.achievements.map((achievement, i) => (
                   <li 
                     key={i} 
-                    className="text-gray-700"
+                    className="text-muted-foreground"
                   >
                     {achievement}
                   </li>
