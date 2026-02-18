@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useId } from 'react';
 import mermaid from 'mermaid';
 
 interface MermaidDiagramProps {
@@ -8,35 +8,40 @@ interface MermaidDiagramProps {
   className?: string;
 }
 
+let renderCounter = 0;
+
 export default function MermaidDiagram({ chart, className = "" }: MermaidDiagramProps) {
   const elementRef = useRef<HTMLDivElement>(null);
+  const id = useId();
 
   useEffect(() => {
-    if (elementRef.current) {
-      // Initialize mermaid
-      mermaid.initialize({
-        startOnLoad: true,
-        theme: 'default',
-        securityLevel: 'loose',
-        fontFamily: 'Inter, system-ui, sans-serif',
-      });
+    if (!elementRef.current) return;
 
-      // Clear previous content
-      elementRef.current.innerHTML = '';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      securityLevel: 'loose',
+      fontFamily: 'Inter, system-ui, sans-serif',
+    });
 
-      // Render the diagram
-      mermaid.render('mermaid-diagram', chart).then(({ svg }) => {
-        if (elementRef.current) {
-          elementRef.current.innerHTML = svg;
-        }
-      }).catch((error) => {
-        console.error('Error rendering mermaid diagram:', error);
-        if (elementRef.current) {
-          elementRef.current.innerHTML = '<p className="text-red-500">Error rendering diagram</p>';
-        }
-      });
-    }
-  }, [chart]);
+    const container = elementRef.current;
+    container.innerHTML = '';
+
+    const uniqueId = `mermaid-${id.replace(/:/g, '')}-${++renderCounter}`;
+
+    mermaid.render(uniqueId, chart).then(({ svg }) => {
+      container.innerHTML = svg;
+    }).catch((error) => {
+      console.error('Error rendering mermaid diagram:', error);
+      container.innerHTML = '<p class="text-red-500">Error rendering diagram</p>';
+    });
+
+    return () => {
+      container.innerHTML = '';
+      const orphan = document.getElementById(uniqueId);
+      orphan?.remove();
+    };
+  }, [chart, id]);
 
   return (
     <div 

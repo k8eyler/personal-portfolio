@@ -23,7 +23,7 @@ const TextCarousel = ({ texts }) => {
   return (
     <div className="h-12">
       <h2 
-        className={`text-4xl font-bold tracking-wider text-gray-900 transition-opacity duration-500 ${
+        className={`text-4xl font-bold tracking-wider text-foreground transition-opacity duration-500 ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -46,23 +46,23 @@ export default function AboutMe() {
       <div className="grid grid-cols-1 gap-24">
         {/* Top section with image and intro */}
         <div className="flex flex-col md:flex-row items-start gap-24">
-          <div className="w-72 h-72 relative rounded-full overflow-hidden shadow-lg">
+          <div className="w-full md:w-72 aspect-square relative overflow-hidden">
             <Image
-              src="/headshot.jpg"
+              src="/starpic.png"
               alt="Profile photo"
-              layout="fill"
-              objectFit="cover"
+              fill
+              className="object-cover"
             />
           </div>
           
           <div className="flex-1 space-y-6">
             <div className="space-y-2">
-              <p className="text-gray-600 text-xl tracking-wide">Hi, I'm</p>
-              <h1 className="text-6xl font-bold tracking-wider text-gray-900">Kate</h1>
+              <p className="text-muted-foreground text-xl tracking-wide">Hi, I'm</p>
+              <h1 className="text-6xl font-bold tracking-wider text-foreground">Kate</h1>
             </div>
             
             <div className="space-y-3">
-              <p className="text-gray-600 text-xl tracking-wide">I'm a</p>
+              <p className="text-muted-foreground text-xl tracking-wide">I'm a</p>
               <TextCarousel texts={carouselTexts} />
             </div>
           </div>
@@ -70,18 +70,18 @@ export default function AboutMe() {
 
         {/* About Me section */}
         <div className="w-full space-y-4">
-          <h2 className="text-2xl font-bold tracking-widest text-gray-900">About Me</h2>
-          <p className="text-gray-600 text-xl leading-relaxed tracking-normal">
-            With 5+ years in Enterprise Post Sales and Sales Operations, I'm experienced in building strategic client relationships, delivering data-driven insights, and showcasing value throughout the sales cycle. I'm always looking to add new skills (small round of applause for my first Nest.js website). Outside of customer-facing responsibilities I've acted as a mentor, cross-functional liaison, and (perhaps most importantly) company intramural kickball captain. In my spare time you can find me solving a crossword puzzle, taking a stab at creating a crossword, or exploring new tools to analyze my crossword solving data.
+          <h2 className="text-2xl font-bold tracking-widest text-foreground">About Me</h2>
+          <p className="text-muted-foreground text-xl leading-relaxed tracking-normal">
+            With 5+ years in Enterprise Post Sales and Sales Operations, I'm experienced in building strategic client relationships, delivering data-driven insights, and showcasing value throughout the sales cycle. I'm always looking to add new skills (small round of applause for my first website). Outside of customer-facing responsibilities I've acted as a mentor, cross-functional liaison, and (perhaps most importantly) company intramural kickball captain. In my spare time you can find me solving a crossword puzzle, taking a stab at creating a crossword, or exploring new tools to analyze my crossword solving data.
           </p>
         </div>
 
         {/* Social links */}
         <div className="flex justify-center gap-8">
-          <a href="https://linkedin.com/in/kate-eyler" className="text-gray-900 hover:text-gray-600 transition-colors">
+          <a href="https://linkedin.com/in/kate-eyler" className="text-foreground hover:text-primary transition-colors">
             <Linkedin size={32} />
           </a>
-          <a href="https://github.com/k8eyler" className="text-gray-900 hover:text-gray-600 transition-colors">
+          <a href="https://github.com/k8eyler" className="text-foreground hover:text-primary transition-colors">
             <Github size={32} />
           </a>
         </div>
