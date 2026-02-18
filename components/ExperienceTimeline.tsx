@@ -8,12 +8,13 @@ const Toggle = ({ isChecked, onChange }) => (
     className={`
       relative inline-flex h-8 w-16 items-center rounded-full
       transition-colors duration-200 ease-in-out focus:outline-none
-      ${isChecked ? 'bg-primary' : 'bg-muted'}
+      bg-background/60 backdrop-blur-xl border border-white/10 shadow-sm
     `}
   >
     <span
       className={`
-        inline-block h-6 w-6 transform rounded-full bg-card transition-transform
+        inline-block h-6 w-6 transform rounded-full transition-transform
+        bg-background/80 backdrop-blur-xl border border-white/20 shadow-sm
         ${isChecked ? 'translate-x-9' : 'translate-x-1'}
       `}
     />
@@ -74,6 +75,16 @@ const professionalExperiences = [
 
 const personalExperiences = [
   {
+    logo: "/travel.png",
+    title: 'Flew 3.5x Around the World',
+    company: '2025',
+    period: '',
+    achievements: [
+      'Spent 8 days 8 minutes in the air',
+      'Highlights: Cannes, Bangkok, Doha, Crete '
+    ]
+  },
+  {
     logo: "/goldstar.jpg",
     title: '1000th Crossword Solved',
     company: '12/22/2024',
@@ -81,6 +92,16 @@ const personalExperiences = [
     achievements: [
       'Sunday puzzle, completed in 25.7 minutes',
       '4th fastest Sunday puzzle to date'
+    ]
+  },
+  {
+    logo: "/skiing.jpg",
+    title: 'Joined Guiness Book of World Records',
+    company: '4/28/2024',
+    period: '',
+    achievements: [
+      'Most Guy Fieris skiing simultaneously (328)',
+      'Minimal ice stuck in my goatee'
     ]
   },
   {

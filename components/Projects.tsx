@@ -24,6 +24,12 @@ const projects = [
     image: '/tines.png',
     link: '/chatbot2.0',
   },
+  {
+    title: 'Lava Lamps — AI Video Loop',
+    description: 'Generating an AI video based on the lava lamps in my living room that can effectively loop.',
+    image: '/lavathumbnail.png',
+    link: '/lavalamps',
+  },
 ];
 
 export default function Projects() {
